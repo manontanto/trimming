@@ -9,28 +9,24 @@ import sys
 pre_post_regex = re.compile('(.*id="menu".*?\n)(.*)', re.DOTALL)
 nl_regex = re.compile(r'\n\s*\n')
 
-fn = input() # ファイル名をパイプから得る
-infile = open(fn, 'r')
-alltxt = infile.read()
+fn = input()
+with open(fn, 'r') as infile:
+    alltxt = infile.read()
+    infile.close()
 outlines = ''
 mo = pre_post_regex.search(alltxt)
 if mo: # menu行があれば
     outlines += mo.group(1) #前半部分
     m = nl_regex.search(mo.group(2))
     if not m:
-        infile.close()
         sys.exit()
     lines = mo.group(2).split('\n')
     for l in lines:
-        if re.match(r'^\s*$', l): #空行はprintせずに次行に
+        if re.match(r'^\s*$', l): # Trim nullLine
             continue
         outlines += l + '\n'
 
-    infile.close()
-    #print(outlines) # for test
     outfile = open(fn, 'w')
     outfile.write(outlines)
     outfile.close()
-
-infile.close()
 
